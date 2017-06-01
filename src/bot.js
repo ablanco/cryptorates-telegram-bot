@@ -8,6 +8,7 @@ const settings = require('./settings.js');
 const TelegramBot = require('node-telegram-bot-api');
 const _ = require('lodash');
 const request = require('request');
+const uuidV4 = require('uuid/v4');
 
 // TELEGRAM BOT ///////////////////////////////////////////////////////////////
 
@@ -28,18 +29,22 @@ const getExchangeRates = function (from, to) {
         `https://api.coinbase.com/v2/prices/${pair}/sell`
     ], function (url) {
         return new Promise(function (resolve, reject) {
-            request
-                .get(url)
-                .on('error', function (error) {
+            request(url, function (error, response, body) {
+                if (error) {
                     reject(error);
-                })
-                .on('data', function (data) {
-                    resolve(data);
-                });
+                }
+                resolve(body);
+            });
         });
     });
 
     return Promise.all(promises);
+};
+
+const rateTypes = {
+    0: 'Spot',
+    1: 'Buy',
+    2: 'Sell'
 };
 
 // COMMANDS ///////////////////////////////////////////////////////////////////
@@ -65,13 +70,36 @@ bot.on('inline_query', function (incomingRequest) {
 
     if (incomingRequest.query.trim().length === 0) {
         bot.answerInlineQuery(inlineId, []);
+        return;
     }
 
     const currencies = incomingRequest.query.trim().split(' ');
+    const from = _.get(currencies, '[0]', '');
+    const to = _.get(currencies, '[1]', '');
 
-    getExchangeRates(currencies[0], currencies[1]).then(function (data) {
-        console.log(data);
-        bot.answerInlineQuery(inlineId, data);
+    if (from.length !== 3 || to.length !== 3) {
+        bot.answerInlineQuery(inlineId, []);
+        return;
+    }
+
+    getExchangeRates(from, to).then(function (data) {
+        var prices = _.map(data, function (dataJson, index) {
+            const amount = _.get(JSON.parse(dataJson), 'data.amount', 'Error');
+            const type = rateTypes[index];
+            const content = `${type} rate: ${amount}`;
+
+            return {
+                id: uuidV4(),
+                type: 'article',
+                title: content,
+                // eslint-disable-next-line camelcase
+                input_message_content: {
+                    // eslint-disable-next-line camelcase
+                    message_text: `${from} to ${to} => ${content}`
+                }
+            };
+        });
+        bot.answerInlineQuery(inlineId, prices);
     });
 });
 
