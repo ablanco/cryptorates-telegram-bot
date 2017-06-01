@@ -22,6 +22,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.4",
-    "node-telegram-bot-api": "^0.27.1"
+    "node-telegram-bot-api": "^0.27.1",
+    "request": "^2.81.0"
   }
 }
