@@ -65,40 +65,54 @@ bot.onText(/\/help.*/, function (msg) {
 
 bot.on('inline_query', function (incomingRequest) {
     const inlineId = incomingRequest.id;
+    const query = incomingRequest.query.trim().toUpperCase();
 
     // console.log(`Querying ${incomingRequest.query}`);
 
-    if (incomingRequest.query.trim().length === 0) {
+    if (query.length === 0) {
         bot.answerInlineQuery(inlineId, []);
         return;
     }
 
-    const currencies = incomingRequest.query.trim().split(' ');
+    const currencies = query.split(' ');
     const from = _.get(currencies, '[0]', '');
-    const to = _.get(currencies, '[1]', '');
+    let to = _.get(currencies, '[1]', '');
 
+    if (to.length === 0) { to = 'EUR'; }
     if (from.length !== 3 || to.length !== 3) {
         bot.answerInlineQuery(inlineId, []);
         return;
     }
 
     getExchangeRates(from, to).then(function (data) {
-        var prices = _.map(data, function (dataJson, index) {
+        let prices = _.map(data, function (dataJson, index) {
             const amount = _.get(JSON.parse(dataJson), 'data.amount', 'Error');
             const type = rateTypes[index];
             const content = `${type} rate: ${amount}`;
 
+            /* eslint-disable camelcase */
             return {
                 id: uuidV4(),
                 type: 'article',
                 title: content,
-                // eslint-disable-next-line camelcase
                 input_message_content: {
-                    // eslint-disable-next-line camelcase
-                    message_text: `${from} to ${to} => ${content}`
+                    parse_mode: 'markdown',
+                    message_text: `${from} to ${to} -> *${content}*`
                 }
             };
         });
+        prices = [{
+            id: uuidV4(),
+            type: 'article',
+            title: 'All rates',
+            input_message_content: {
+                parse_mode: 'markdown',
+                message_text: _.map(prices, function (rate) {
+                    return rate.input_message_content.message_text;
+                }).join('\n')
+            }
+        }].concat(prices);
+        /* eslint-enable camelcase */
         bot.answerInlineQuery(inlineId, prices);
     });
 });
