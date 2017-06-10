@@ -1,5 +1,7 @@
 # cryptorates-telegram-bot
 
+[![Code Climate](https://codeclimate.com/github/ablanco/cryptorates-telegram-bot/badges/gpa.svg)](https://codeclimate.com/github/ablanco/cryptorates-telegram-bot)
+
 A Telegram bot for getting cryptocurrencies exchange rates, from Coinbase.
 
 It works in inline mode. Write `@cryptorates_bot <currency_1> <currency_2>` in
