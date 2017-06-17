@@ -83,8 +83,8 @@ bot.on('inline_query', function (incomingRequest) {
         key = key[0];
         data = data[key];
 
-        const buyAmount = _.get(data, 'b.0', 'Error');
-        const sellAmount = _.get(data, 'a.0', 'Error');
+        const buyAmount = _.get(data, 'a.0', 'Error');
+        const sellAmount = _.get(data, 'b.0', 'Error');
         const lastAmount = _.get(data, 'c.0', 'Error');
         const tfhVolume = _.get(data, 'v.1', 'Error');
         const tfhAverageAmount = _.get(data, 'p.1', 'Error');
