@@ -2,6 +2,7 @@
 
 [![Code Climate](https://codeclimate.com/github/ablanco/cryptorates-telegram-bot/badges/gpa.svg)](https://codeclimate.com/github/ablanco/cryptorates-telegram-bot)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fablanco%2Fcryptorates-telegram-bot.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fablanco%2Fcryptorates-telegram-bot?ref=badge_shield)
+[![dependencies Status](https://david-dm.org/ablanco/cryptorates-telegram-bot/status.svg)](https://david-dm.org/ablanco/cryptorates-telegram-bot)
 
 A Telegram bot for getting cryptocurrencies exchange rates, from Kraken.
 
