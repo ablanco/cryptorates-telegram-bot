@@ -8,7 +8,7 @@ const settings = require('./settings.js');
 const TelegramBot = require('node-telegram-bot-api');
 const _ = require('lodash');
 const request = require('request');
-const uuidV4 = require('uuid/v4');
+const uuid = require('node-uuid');
 
 // TELEGRAM BOT ///////////////////////////////////////////////////////////////
 
@@ -110,7 +110,7 @@ Today's opening price: *${openingAmount}*
 _Data from kraken.com_`;
 
         bot.answerInlineQuery(inlineId, [{
-            id: uuidV4(),
+            id: uuid.v4(),
             type: 'article',
             title: `Buy at ${buyAmount} and sell at ${sellAmount}`,
             /* eslint-disable camelcase */
